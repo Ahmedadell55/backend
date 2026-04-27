@@ -1,64 +1,48 @@
-# api/dependencies/auth.py
-"""
-اعتماديات FastAPI للمصادقة والتحقق من المستخدمين
-"""
-
 from fastapi import Header, HTTPException, Depends
 from typing import Optional
 from supabase import Client
-
 from data.supabase_client import get_supabase
-from core.exceptions import InvalidTokenError
 
 
 # =========================
-# 1) Extract Token
+# Extract Bearer Token (safe)
 # =========================
 async def get_token_from_header(
     authorization: Optional[str] = Header(None, alias="Authorization")
 ) -> str:
-    """
-    استخراج التوكن من الهيدر
-    """
     if not authorization:
         raise HTTPException(status_code=401, detail="No token provided")
 
     parts = authorization.split()
 
-    # Bearer token
-    if len(parts) == 2 and parts[0].lower() == "bearer":
-        return parts[1]
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise HTTPException(status_code=401, detail="Invalid token format")
 
-    return authorization
+    return parts[1]
 
 
 # =========================
-# 2) Current User
+# Current User (safe + clean)
 # =========================
 async def get_current_user(
     token: str = Depends(get_token_from_header)
 ):
-    """
-    جلب المستخدم الحالي من التوكن
-    """
+    supabase: Client = get_supabase()
+
     try:
-        supabase: Client = get_supabase()
-        user = supabase.auth.get_user(token)
+        user_response = supabase.auth.get_user(token)
 
-        if not user or not user.user:
-            raise InvalidTokenError()
+        if not user_response or not user_response.user:
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-        return user.user
+        return user_response.user
 
-    except InvalidTokenError:
-        raise
-
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=401, detail="Authentication failed")
 
 
 # =========================
-# 3) User ID only
+# User ID shortcut
 # =========================
 async def get_current_user_id(
     current_user=Depends(get_current_user)
@@ -67,23 +51,21 @@ async def get_current_user_id(
 
 
 # =========================
-# 4) Optional User
+# Optional user (safe)
 # =========================
 async def optional_user(
     authorization: Optional[str] = Header(None, alias="Authorization")
 ):
-    """
-    المستخدم اختياري (public endpoints)
-    """
     if not authorization:
         return None
 
+    parts = authorization.split()
+    if len(parts) != 2:
+        return None
+
     try:
-        token = authorization.replace("Bearer ", "")
         supabase: Client = get_supabase()
-
-        user = supabase.auth.get_user(token)
-        return user.user if user and user.user else None
-
+        user = supabase.auth.get_user(parts[1])
+        return user.user if user else None
     except Exception:
         return None
