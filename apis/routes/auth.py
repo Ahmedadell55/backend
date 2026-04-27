@@ -122,25 +122,6 @@ async def login(credentials: LoginRequest):
             raise HTTPException(status_code=401, detail="يرجى تأكيد بريدك الإلكتروني أولاً")
         raise HTTPException(status_code=401, detail=err)
 
-
-# =========================
-# Logout
-# =========================
-@router.post("/logout")
-async def logout(current_user=Depends(get_current_user)):
-    try:
-        supabase = get_supabase()
-        supabase.auth.sign_out()
-
-        return {
-            "success": True,
-            "message": "Logged out successfully"
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 # =========================
 # Forgot Password
 # =========================
