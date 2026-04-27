@@ -2,7 +2,7 @@
 """
 Routes للمصادقة: تسجيل، دخول، خروج، نسيت كلمة المرور
 """
-
+from core.config import settings
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional
