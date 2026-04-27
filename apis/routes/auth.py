@@ -122,14 +122,13 @@ async def login(credentials: LoginRequest):
             raise HTTPException(status_code=401, detail="يرجى تأكيد بريدك الإلكتروني أولاً")
         raise HTTPException(status_code=401, detail=err)
 
-
-@router.post("/forgot-password")
+#========================forget=========================@router.post("/forgot-password")
 async def forgot_password(request: ForgotPasswordRequest):
     try:
         supabase = get_supabase()
         supabase.auth.reset_password_for_email(
             request.email,
-            options={
+            {
                 "redirect_to": f"{settings.FRONTEND_URL}/reset-password"
             }
         )
@@ -138,7 +137,8 @@ async def forgot_password(request: ForgotPasswordRequest):
             "message": "Reset email sent"
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))# =========================
+        raise HTTPException(status_code=500, detail=str(e))
+# =========================
 # Reset Password
 # =========================
 @router.post("/reset-password")
