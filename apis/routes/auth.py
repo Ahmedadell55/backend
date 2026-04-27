@@ -214,7 +214,8 @@ async def google_login():
             "provider": "google",
             "options": {
                 # ✅ بيقول لـ Supabase يرجع على الباك إند مش الفرونت
-                "redirect_to": f"http://localhost:8000/auth/callback"
+                
+                "redirect_to": f"https://jgoizofoygoewtdrxatx.supabase.co/auth/v1/callback"
             }
         })
 
