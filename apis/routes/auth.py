@@ -141,28 +141,43 @@ async def forgot_password(request: ForgotPasswordRequest):
         raise HTTPException(status_code=500, detail=str(e))
 # =========================
 # Reset Password
-# =========================
-@router.post("/reset-password")
+# =========================@router.post("/reset-password")
 async def reset_password(
     request: ResetPasswordRequest,
-    current_user=Depends(get_current_user)
+    current_user = Depends(get_current_user)  # ✅ لازم يكون معاه توكن صحيح
 ):
+    """
+    تغيير كلمة المرور للمستخدم الحالي (المُصادق عليه بالتوكن)
+    
+    المتطلبات:
+    - التوكن لازم يكون صحيح وجاي من رابط إعادة التعيين
+    - المستخدم لازم يكون سجل دخول بالتوكن ده
+    
+    الفرونت بيبعت:
+    - Header: Authorization: Bearer <access_token>
+    - Body: {"new_password": "كلمة_المرور_الجديدة"}
+    """
     try:
         supabase = get_supabase()
-
+        
+        # ✅ تغيير الباسورد للمستخدم المُصادق عليه
         supabase.auth.update_user({
             "password": request.new_password
         })
 
         return {
             "success": True,
-            "message": "Password updated successfully"
+            "message": "تم تغيير كلمة المرور بنجاح"
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
+        err = str(e)
+        if "same as old" in err.lower() or "same password" in err.lower():
+            raise HTTPException(
+                status_code=400, 
+                detail="كلمة المرور الجديدة لا يمكن أن تكون نفس القديمة"
+            )
+        raise HTTPException(status_code=500, detail=err)
 # =========================
 # Get current user
 # =========================
