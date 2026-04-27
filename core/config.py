@@ -3,8 +3,8 @@ from typing import List
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    SUPABASE_URL: str = ""
-    SUPABASE_KEY: str = ""
+    SUPABASE_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impnb2l6b2ZveWdvZXd0ZHJ4YXR4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzAwNjAwNywiZXhwIjoyMDkyNTgyMDA3fQ.8_pIw5RWLfNJoSXDEzWJtmQitj76gBaA5ywZ0SfgzhE"
+    SUPABASE_URL: str = "https://jgoizofoygoewtdrxatx.supabase.co"
     PROJECTS_DIR: str = "saved_projects"
     APP_NAME: str = "Darb SmartCity API"
     APP_VERSION: str = "1.0.0"
@@ -25,6 +25,5 @@ class Settings(BaseSettings):
     def ensure_directories(self):
         os.makedirs(self.PROJECTS_DIR, exist_ok=True)
 
-    model_config = {"env_file": ".env"}
 
 settings = Settings()
