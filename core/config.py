@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
     # ⬇️ هتحطه في Railway Variables بعد ما تاخد رابط Netlify
-    FRONTEND_URL: str = ""
+    FRONTEND_URL: str = "https://graceful-marigold-8eacf9.netlify.app/"
 
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:
