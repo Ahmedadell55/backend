@@ -122,7 +122,8 @@ async def login(credentials: LoginRequest):
             raise HTTPException(status_code=401, detail="يرجى تأكيد بريدك الإلكتروني أولاً")
         raise HTTPException(status_code=401, detail=err)
 
-#========================forget=========================@router.post("/forgot-password")
+#========================forget=========================
+@router.post("/forgot-password")
 async def forgot_password(request: ForgotPasswordRequest):
     try:
         supabase = get_supabase()
