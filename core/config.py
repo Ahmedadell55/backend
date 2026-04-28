@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
     # ⬇️ هتحطه في Railway Variables بعد ما تاخد رابط Netlify
-    FRONTEND_URL: str = "https://taupe-pika-a4c3de.netlify.app"
+    FRONTEND_URL: str = "https://kaleidoscopic-croissant-4ed04a.netlify.app/"
 
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:
